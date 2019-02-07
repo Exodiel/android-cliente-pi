@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="nombre">17sp</dimen>
+    <dimen name="codigo">15sp</dimen>
+    <dimen name="total">20sp</dimen>
+
+    <dimen name="pregunta">16sp</dimen>
+    <dimen name="enunciado">12sp</dimen>
+    <dimen name="opcion">16sp</dimen>
+</resources>
