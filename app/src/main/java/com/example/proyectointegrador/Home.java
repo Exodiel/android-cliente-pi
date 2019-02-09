@@ -44,7 +44,7 @@ public class Home extends Activity {
     private ListView container;
     private Button calcular,mirar;
     private ProgressBar asincrono;
-    private ArrayList<Materia> matLis = new ArrayList<Materia>();
+    private ArrayList<Materia> matLis = new ArrayList<>();
     private CustomListAdapter adapter;
 
     @Override
@@ -61,7 +61,7 @@ public class Home extends Activity {
         asincrono = findViewById(R.id.asincrono);
 
         Bundle params = this.getIntent().getExtras();
-        final Integer id = params.getInt("id_es");
+        final int id = params.getInt("id_es");
         final String nom = params.getString("nombre");
         String ced = params.getString("cedula");
 
@@ -111,7 +111,9 @@ public class Home extends Activity {
 
 
 
-                } catch (Exception e){}
+                } catch (Exception e){
+                    Toast.makeText(Home.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -346,6 +348,8 @@ public class Home extends Activity {
 
         AppController.getInstance().addToRequestQueue(request);
     }
+
+    private void getUserScore(){}
 
     @Override
     public void onBackPressed() {
