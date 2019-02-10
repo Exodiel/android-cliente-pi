@@ -163,27 +163,31 @@ public class Home extends Activity {
                 if (matLis.isEmpty()) {
                     Toast.makeText(Home.this, "Espera un momento por favor.", Toast.LENGTH_SHORT).show();
                 } else {
-                    try {
-                        Materia nota1 = (Materia) adapter.getItem(0);
-                        Materia nota2 = (Materia) adapter.getItem(1);
-                        Materia nota3 = (Materia) adapter.getItem(2);
-                        Materia nota4 = (Materia) adapter.getItem(3);
-                        if (nota1.getTotal() <= 0 || nota2.getTotal() <= 0 || nota3.getTotal() <= 0 || nota4.getTotal() <= 0) {
-                            Toast.makeText(Home.this, "Primero debes responder las preguntas de cada materia", Toast.LENGTH_LONG).show();
-                        } else {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("cod_es",Integer.parseInt(id_es.getText().toString()));
-                            bundle.putString("nombre",nombre.getText().toString());
-                            bundle.putInt("cod_mat",nota1.getId_mat());
-                            bundle.putInt("cod_lit",nota2.getId_mat());
-                            bundle.putInt("cod_est",nota3.getId_mat());
-                            bundle.putInt("cod_bio",nota4.getId_mat());
-                            Intent intent = new Intent(Home.this,Mitad.class);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
+                    if (estado.getText().equals("0")) {
+                        Toast.makeText(Home.this, "Aún no tienes una nota", Toast.LENGTH_LONG).show();
+                    }else {
+                        try {
+                            Materia nota1 = (Materia) adapter.getItem(0);
+                            Materia nota2 = (Materia) adapter.getItem(1);
+                            Materia nota3 = (Materia) adapter.getItem(2);
+                            Materia nota4 = (Materia) adapter.getItem(3);
+                            if (nota1.getTotal() <= 0 || nota2.getTotal() <= 0 || nota3.getTotal() <= 0 || nota4.getTotal() <= 0) {
+                                Toast.makeText(Home.this, "Primero debes responder las preguntas de cada materia", Toast.LENGTH_LONG).show();
+                            } else {
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("cod_es",Integer.parseInt(id_es.getText().toString()));
+                                bundle.putString("nombre",nombre.getText().toString());
+                                bundle.putInt("cod_mat",nota1.getId_mat());
+                                bundle.putInt("cod_lit",nota2.getId_mat());
+                                bundle.putInt("cod_est",nota3.getId_mat());
+                                bundle.putInt("cod_bio",nota4.getId_mat());
+                                Intent intent = new Intent(Home.this,Mitad.class);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(Home.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                    } catch (Exception e) {
-                        Toast.makeText(Home.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -436,5 +440,4 @@ public class Home extends Activity {
                 .show();
 
     }
-
 }
