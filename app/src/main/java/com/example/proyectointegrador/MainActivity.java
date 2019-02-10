@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             params.putInt("id_es",result.getInt("id_es"));
                             params.putString("nombre",result.getString("nombre"));
                             params.putString("cedula",result.getString("cedula"));
-                            params.putInt("estado",result.getInt("estado"));
                             Intent intent = new Intent(getApplicationContext(),Home.class);
                             intent.putExtras(params);
                             startActivity(intent);

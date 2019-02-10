@@ -40,7 +40,7 @@ import java.util.TimerTask;
 
 public class Home extends Activity {
 
-    private TextView id_es, nombre, cedula;
+    private TextView id_es, nombre, cedula, estado;
     private ListView container;
     private Button calcular,mirar;
     private ProgressBar asincrono;
@@ -55,6 +55,7 @@ public class Home extends Activity {
         id_es = findViewById(R.id.id_es);
         nombre = findViewById(R.id.nombre);
         cedula = findViewById(R.id.cedula);
+        estado = findViewById(R.id.estado);
         container = findViewById(R.id.list);
         calcular = findViewById(R.id.calcular);
         mirar = findViewById(R.id.mirar);
@@ -80,6 +81,7 @@ public class Home extends Activity {
                     public void run() {
                         try {
                             getSubjects();
+                            getUserState();
                         }catch (Exception e) {
                             Toast.makeText(Home.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -126,14 +128,26 @@ public class Home extends Activity {
                         Toast.makeText(Home.this, "Espera un momento por favor.", Toast.LENGTH_SHORT).show();
                     } else {
 
-                        Materia nota1 = (Materia) adapter.getItem(0);
-                        Materia nota2 = (Materia) adapter.getItem(1);
-                        Materia nota3 = (Materia) adapter.getItem(2);
-                        Materia nota4 = (Materia) adapter.getItem(3);
-                        if (nota1.getTotal() <= 0 || nota2.getTotal() <= 0 || nota3.getTotal() <= 0 || nota4.getTotal() <= 0) {
-                            Toast.makeText(Home.this, "Primero debes responder las preguntas de cada materia", Toast.LENGTH_LONG).show();
-                        }else {
-                            new Mytask().execute();
+                        if (estado.getText().equals("1")) {
+                            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                            View custom = inflater.inflate(R.layout.toast_thanks, null);
+                            TextView txt = custom.findViewById(R.id.face);
+                            txt.setText("Ya obtuviste tú puntaje");
+                            Toast toast = new Toast(getApplicationContext());
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.setDuration(Toast.LENGTH_LONG);
+                            toast.setView(custom);
+                            toast.show();
+                        } else {
+                            Materia nota1 = (Materia) adapter.getItem(0);
+                            Materia nota2 = (Materia) adapter.getItem(1);
+                            Materia nota3 = (Materia) adapter.getItem(2);
+                            Materia nota4 = (Materia) adapter.getItem(3);
+                            if (nota1.getTotal() <= 0 || nota2.getTotal() <= 0 || nota3.getTotal() <= 0 || nota4.getTotal() <= 0) {
+                                Toast.makeText(Home.this, "Primero debes responder las preguntas de cada materia", Toast.LENGTH_LONG).show();
+                            }else {
+                                new Mytask().execute();
+                            }
                         }
 
                     }
@@ -349,7 +363,58 @@ public class Home extends Activity {
         AppController.getInstance().addToRequestQueue(request);
     }
 
-    private void getUserScore(){}
+    private void getUserState(){
+        try {
+            String url = Helper.GET_USER_STATE;
+            JSONObject object = new JSONObject();
+            object.put("id_es",Integer.parseInt(id_es.getText().toString()));
+            JsonObjectRequest request = new JsonObjectRequest(
+                    Request.Method.POST,
+                    url,
+                    object,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONObject res = response.getJSONObject("result");
+                                estado.setText(""+res.getInt("estado"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            NetworkResponse response = error.networkResponse;
+                            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                            View customToast = inflater.inflate(R.layout.toast_layout, null);
+                            TextView txt = customToast.findViewById(R.id.txttoas);
+                            txt.setText(new String(response.data));
+                            Toast toast = new Toast(getApplicationContext());
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.setDuration(Toast.LENGTH_LONG);
+                            toast.setView(customToast);
+                            toast.show();
+                        }
+                    }
+            ) {
+
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> parametros = new HashMap<>();
+                    parametros.put("content-type", "application/json; charset=utf-8");
+
+                    return parametros;
+                }
+            };
+
+            AppController.getInstance().addToRequestQueue(request);
+        } catch (JSONException e){
+            Toast.makeText(this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
     @Override
     public void onBackPressed() {
